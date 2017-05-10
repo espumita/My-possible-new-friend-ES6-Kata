@@ -10,4 +10,4 @@ This is a simple kata:
  **Goal**: I want to know who is going to be my more possible next friend.
 
 
- > **Next possible friend**: is the friend who my friends have more in common.
+ > **Possible next friend**: is the friend who my friends have more in common.
