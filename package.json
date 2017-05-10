@@ -1,0 +1,18 @@
+{
+  "name": "friends-kata",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --compilers js:babel-core/register  \"test/*Should.js\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-preset-latest": "^6.24.1",
+    "chai": "^3.5.0",
+    "lodash": "^4.17.4",
+    "mocha": "^3.3.0"
+  }
+}
