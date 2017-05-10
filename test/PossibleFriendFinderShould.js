@@ -2,14 +2,32 @@ import { expect } from 'chai';
 import _ from 'lodash';
 
 
-describe('Possible friend finder', () => {
+describe('Possible friend finder finds a possible friend when', () => {
     
-    it('finds a possible friend when my friends only have a friend', () => {
+    it('my friend only have a friend', () => {
         const me = Person('David');
         const jhon = Person("Jhon");
         const mike = Person('Mike');
         const relations = [ [ me, jhon ],
                             [ jhon, mike ]
+                         ];        
+        const posibleFriendFinder = PosibleFriendFinder(me, relations);
+
+        const possibleFriend = posibleFriendFinder.find();
+
+        expect(possibleFriend).to.be.deep.equal(mike);
+    });
+
+
+    it('my friends only have the same friend', () => {
+        const me = Person('David');
+        const jhon = Person("Jhon");
+        const thomas = Person("Thomas");
+        const mike = Person('Mike');
+        const relations = [ [ me, jhon ],
+                            [ me, thomas ],
+                            [ jhon, mike ],
+                            [ thomas, mike ]
                          ];        
         const posibleFriendFinder = PosibleFriendFinder(me, relations);
 
