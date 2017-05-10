@@ -35,6 +35,25 @@ describe('Possible friend finder finds a possible friend when', () => {
 
         expect(possibleFriend).to.be.deep.equal(mike);
     });
+
+    
+    it('my friends only have the same friend and they are friends', () => {
+        const me = Person('David');
+        const jhon = Person("Jhon");
+        const thomas = Person("Thomas");
+        const mike = Person('Mike');
+        const relations = [ [ me, jhon ],
+                            [ me, thomas ],
+                            [ jhon, mike ],
+                            [ thomas, mike ],
+                            [ thomas, jhon ]
+                         ];        
+        const posibleFriendFinder = PosibleFriendFinder(me, relations);
+
+        const possibleFriend = posibleFriendFinder.find();
+
+        expect(possibleFriend).to.be.deep.equal(mike);
+    });
 });
 
 
@@ -42,21 +61,21 @@ describe('Possible friend finder finds a possible friend when', () => {
 function PosibleFriendFinder (focusPerson, relations) {
     
     function find () {
-        const myRelationsWithMyFriends = _.filter(relations, (relation) =>  relation[0] == focusPerson || relation[1] == focusPerson);
-        const myFriendsList = _.map(myRelationsWithMyFriends, (relation) => {
+        const myFriendships = _.filter(relations, (relation) =>  relation[0] == focusPerson || relation[1] == focusPerson);
+        const myFriendsList = _.map(myFriendships, (relation) => {
             return relation[0] == focusPerson ? relation[1] : relation[0]; 
         });
 
-        const myFriendsOthersRelations = _.filter(relations, (relation) =>  !(relation[0] == focusPerson || relation[1] == focusPerson));
+        const myFriendsOthersFriendships = _.filter(relations, (relation) =>  !(relation[0] == focusPerson || relation[1] == focusPerson));
 
-        const myNotFriendNameList = _.map(myFriendsOthersRelations, (relation) => {
-            return _.includes(myFriendsList, relation[0]) ? relation[1] : relation[0]
+        const UnknownPeople = _.map(myFriendsOthersFriendships, (relation) => {
+            return _.includes(myFriendsList, relation[0]) ? relation[1] : relation[0];
+        }).filter( (person) => {
+            return !_.includes(myFriendsList, person);
         });
 
-        const myNewPossibleFriend = _.maxBy(_.uniq(myNotFriendNameList), (notFriend) => {
-            const ocurrences = _.filter(myNotFriendNameList, (notFrind2) => notFrind2 == notFriend).length;
-            console.log(ocurrences);
-            return ocurrences;
+        const myNewPossibleFriend = _.maxBy(_.uniq(UnknownPeople), (notFriend) => {
+            return _.filter(UnknownPeople, (people) => people == notFriend).length;
         })
 
         return myNewPossibleFriend;
