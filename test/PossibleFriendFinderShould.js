@@ -61,34 +61,38 @@ describe('Possible friend finder finds a possible friend when', () => {
 function PosibleFriendFinder (focusPerson, relations) {
     
     function find () {
-        const personUnknownPeople = unknownPeople();
-        
-        return _(_.uniq(personUnknownPeople)).maxBy( (notFriend) => notFriendOccurrences(personUnknownPeople, notFriend) );
+        const unknownPeople = allFriendsFriends();
+
+        return _(_.uniq(unknownPeople)).maxBy( (notFriend) => notFriendOccurrences(unknownPeople, notFriend) );
     }
 
 
-    function unknownPeople(){
-        const personfriendsList = friendsList();
+    function allFriendsFriends(){
+        const friends = focusPersonFriends();
+        const relationsWithUnknownPeople = removeRelationsBettweenFocusPersonFriends(friends, notFocusPersonRelations());
 
-        return _.map(othersFriendships(), (relation) => _(personfriendsList).includes(relation[0]) ? relation[1] : relation[0])
-                .filter( (person) => !_(personfriendsList).includes(person));
+        return _.map(relationsWithUnknownPeople, (relation) => _(friends).includes(relation[0]) ? relation[1] : relation[0]);
     }
 
-
-    function friendsList(){
+    function focusPersonFriends(){
         return _(relations).filter( (relation) =>  relation[0] == focusPerson || relation[1] == focusPerson)
                            .map( (relation) => relation[0] == focusPerson ? relation[1] : relation[0]);
     }
 
 
-    function othersFriendships () {
+    function notFocusPersonRelations () {
         return _.filter(relations, (relation) =>  !(relation[0] == focusPerson || relation[1] == focusPerson));
 
     }
 
 
-    function notFriendOccurrences(personUnknownPeople, notFriend){
-        return _.filter(personUnknownPeople, (people) => people == notFriend).length
+    function removeRelationsBettweenFocusPersonFriends(friends, notFocusPersonRelations){
+        return _.filter(notFocusPersonRelations, (relation) => !(_(friends).includes(relation[0]) && _(friends).includes(relation[1])) );
+    }
+
+
+    function notFriendOccurrences(unknownPeople, notFriend){
+        return _.filter(unknownPeople, (people) => people == notFriend).length
     }
 
 
