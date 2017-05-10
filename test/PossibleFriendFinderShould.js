@@ -60,28 +60,37 @@ describe('Possible friend finder finds a possible friend when', () => {
 
 function PosibleFriendFinder (focusPerson, relations) {
     
-    function friendsList(){
-        return _.filter(relations, (relation) =>  relation[0] == focusPerson || relation[1] == focusPerson)
-                .map((relation) => relation[0] == focusPerson ? relation[1] : relation[0]);
+    function find () {
+        const personUnknownPeople = unknownPeople();
+        
+        return _(_.uniq(personUnknownPeople)).maxBy( (notFriend) => notFriendOccurrences(personUnknownPeople, notFriend) );
     }
 
-    function find () {
+
+    function unknownPeople(){
         const personfriendsList = friendsList();
 
-        const myFriendsOthersFriendships = _.filter(relations, (relation) =>  !(relation[0] == focusPerson || relation[1] == focusPerson));
-
-        const UnknownPeople = _.map(myFriendsOthersFriendships, (relation) => {
-            return _.includes(personfriendsList, relation[0]) ? relation[1] : relation[0];
-        }).filter( (person) => {
-            return !_.includes(personfriendsList, person);
-        });
-
-        const myNewPossibleFriend = _.maxBy(_.uniq(UnknownPeople), (notFriend) => {
-            return _.filter(UnknownPeople, (people) => people == notFriend).length;
-        })
-
-        return myNewPossibleFriend;
+        return _.map(othersFriendships(), (relation) => _(personfriendsList).includes(relation[0]) ? relation[1] : relation[0])
+                .filter( (person) => !_(personfriendsList).includes(person));
     }
+
+
+    function friendsList(){
+        return _(relations).filter( (relation) =>  relation[0] == focusPerson || relation[1] == focusPerson)
+                           .map( (relation) => relation[0] == focusPerson ? relation[1] : relation[0]);
+    }
+
+
+    function othersFriendships () {
+        return _.filter(relations, (relation) =>  !(relation[0] == focusPerson || relation[1] == focusPerson));
+
+    }
+
+
+    function notFriendOccurrences(personUnknownPeople, notFriend){
+        return _.filter(personUnknownPeople, (people) => people == notFriend).length
+    }
+
 
     return {
         find
@@ -90,7 +99,7 @@ function PosibleFriendFinder (focusPerson, relations) {
 
 
 function Person (name) {
-    
+
 
     return {
         name
