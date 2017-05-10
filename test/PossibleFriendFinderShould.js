@@ -60,18 +60,20 @@ describe('Possible friend finder finds a possible friend when', () => {
 
 function PosibleFriendFinder (focusPerson, relations) {
     
+    function friendsList(){
+        return _.filter(relations, (relation) =>  relation[0] == focusPerson || relation[1] == focusPerson)
+                .map((relation) => relation[0] == focusPerson ? relation[1] : relation[0]);
+    }
+
     function find () {
-        const myFriendships = _.filter(relations, (relation) =>  relation[0] == focusPerson || relation[1] == focusPerson);
-        const myFriendsList = _.map(myFriendships, (relation) => {
-            return relation[0] == focusPerson ? relation[1] : relation[0]; 
-        });
+        const personfriendsList = friendsList();
 
         const myFriendsOthersFriendships = _.filter(relations, (relation) =>  !(relation[0] == focusPerson || relation[1] == focusPerson));
 
         const UnknownPeople = _.map(myFriendsOthersFriendships, (relation) => {
-            return _.includes(myFriendsList, relation[0]) ? relation[1] : relation[0];
+            return _.includes(personfriendsList, relation[0]) ? relation[1] : relation[0];
         }).filter( (person) => {
-            return !_.includes(myFriendsList, person);
+            return !_.includes(personfriendsList, person);
         });
 
         const myNewPossibleFriend = _.maxBy(_.uniq(UnknownPeople), (notFriend) => {
